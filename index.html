@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secret Santa Gift Matcher</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -126,16 +127,18 @@
             gap: 10px;
             margin-bottom: 20px;
             border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
         }
 
         .tab {
             flex: 1;
+            min-width: 100px;
             padding: 12px;
             background: none;
             border: none;
             border-bottom: 3px solid transparent;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             color: #666;
             transition: all 0.3s;
@@ -425,31 +428,29 @@
             text-align: center;
         }
 
-        .loading {
+        .status-message {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
             text-align: center;
-            padding: 20px;
-            color: #666;
         }
 
-        .alert-box {
-            background: #d1ecf1;
-            border: 2px solid #0c5460;
-            color: #0c5460;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-
-        .alert-box.error {
-            background: #f8d7da;
-            border-color: #721c24;
-            color: #721c24;
-        }
-
-        .alert-box.success {
+        .status-message.success {
             background: #d4edda;
-            border-color: #155724;
             color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
 
         .hidden {
@@ -459,6 +460,10 @@
         @media (max-width: 600px) {
             .birthday-inputs {
                 grid-template-columns: 1fr;
+            }
+            .tab {
+                font-size: 12px;
+                padding: 10px 5px;
             }
         }
     </style>
@@ -471,34 +476,11 @@
         </div>
 
         <div class="content">
-            <div class="alert-box">
-                <strong>📱 Important:</strong> This version stores data in the cloud using JSONBin.io. The first person to create a room needs to get a free API key (takes 30 seconds). <a href="#" onclick="showApiInstructions(); return false;">Show me how</a>
-            </div>
-
-            <div id="apiInstructions" class="alert-box hidden" style="background: #fff3cd; border-color: #856404; color: #856404;">
-                <h4 style="margin-bottom: 10px;">Get Your Free API Key:</h4>
-                <ol style="margin-left: 20px; line-height: 1.8;">
-                    <li>Go to <a href="https://jsonbin.io" target="_blank" style="color: #c41e3a; font-weight: 600;">jsonbin.io</a></li>
-                    <li>Click "Sign Up Free" (no credit card needed)</li>
-                    <li>Verify your email</li>
-                    <li>Go to "API Keys" in the dashboard</li>
-                    <li>Copy your API key</li>
-                    <li>Paste it below</li>
-                </ol>
-                <p style="margin-top: 10px; font-size: 12px;"><strong>Note:</strong> Only the organizer needs to do this once. Everyone else just needs the room code!</p>
-            </div>
-
             <div id="setupSection" class="setup-section">
-                <h3>🎄 Get Started</h3>
+                <h3>🎄 Welcome to Secret Santa!</h3>
+                <p>Create a new room or join an existing one.</p>
                 
-                <div id="apiKeySection">
-                    <label>JSONBin API Key (only needed for creating rooms):</label>
-                    <input type="text" id="apiKeyInput" placeholder="Paste your API key here">
-                    <button onclick="saveApiKey()">Save API Key</button>
-                    <p style="font-size: 12px; color: #666; margin-top: 5px;">This will be saved in your browser only.</p>
-                </div>
-
-                <div id="roomActions" class="hidden">
+                <div id="roomActions">
                     <button onclick="createNewRoom()">Create New Room</button>
                     <p style="text-align: center; margin: 15px 0; color: #666;">- OR -</p>
                     <input type="text" id="roomCodeInput" placeholder="Enter Room Code" maxlength="6">
@@ -526,8 +508,8 @@
                 <div class="tabs">
                     <button class="tab active" onclick="showAddTab()">➕ Add Person</button>
                     <button class="tab" onclick="showViewTab()">👥 View All (<span id="participantCount">0</span>)</button>
-                    <button class="tab" onclick="showMatchTab()">🎁 Gift Matcher</button>
-                    <button class="tab" id="findMatchTab" onclick="showFindMatchTab()" style="display: none;">🔍 Find My Match</button>
+                    <button class="tab" onclick="showMatchTab()">🎁 Matcher</button>
+                    <button class="tab" id="findMatchTab" onclick="showFindMatchTab()" style="display: none;">🔍 My Match</button>
                 </div>
 
                 <div id="addSection">
@@ -598,6 +580,11 @@
     </div>
 
     <script>
+        const SUPABASE_URL = 'https://qmnxezjxjxfltmbpxbec.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtbnhlemp4anhmbHRtYnB4YmVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ5NDc0NTksImV4cCI6MjA4MDUyMzQ1OX0.LGlh7vkaJTLVcI6O5UHEHhQ-QKzirnWZPY9SGKM5USI';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         const GIFT_CATEGORIES = {
             hobbies: {
                 title: "Hobbies & Interests",
@@ -627,16 +614,18 @@
 
         const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-        let apiKey = null;
         let currentRoomCode = null;
-        let currentBinId = null;
+        let currentRoomId = null;
         let participants = [];
         let selectedPreferences = {};
         let matches = [];
-        let syncInterval = null;
+        let syncChannel = null;
 
-        function showApiInstructions() {
-            document.getElementById('apiInstructions').classList.remove('hidden');
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.className = 'status-message ' + type;
+            statusDiv.innerHTML = message;
+            statusDiv.style.display = 'block';
         }
 
         function generateRoomCode() {
@@ -648,70 +637,33 @@
             return code;
         }
 
-        function showStatus(message, type = 'info') {
-            const statusDiv = document.getElementById('statusMessage');
-            statusDiv.className = 'alert-box ' + type;
-            statusDiv.innerHTML = message;
-            statusDiv.style.display = 'block';
-        }
-
-        function saveApiKey() {
-            const key = document.getElementById('apiKeyInput').value.trim();
-            if (!key) {
-                showStatus('Please enter an API key', 'error');
-                return;
-            }
-            
-            apiKey = key;
-            localStorage.setItem('jsonbinApiKey', key);
-            document.getElementById('apiKeySection').classList.add('hidden');
-            document.getElementById('roomActions').classList.remove('hidden');
-            showStatus('API key saved! You can now create or join a room.', 'success');
-        }
-
         async function createNewRoom() {
-            if (!apiKey) {
-                showStatus('Please enter your API key first', 'error');
-                return;
-            }
-
             showStatus('Creating room...', 'info');
             currentRoomCode = generateRoomCode();
 
-            const roomData = {
-                roomCode: currentRoomCode,
-                participants: [],
-                matches: [],
-                created: new Date().toISOString()
-            };
-
             try {
-                const response = await fetch('https://api.jsonbin.io/v3/b', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': apiKey,
-                        'X-Bin-Name': 'SecretSanta_' + currentRoomCode
-                    },
-                    body: JSON.stringify(roomData)
-                });
+                const { data, error } = await supabase
+                    .from('secret_santa_rooms')
+                    .insert([
+                        { 
+                            room_code: currentRoomCode,
+                            participants: [],
+                            matches: []
+                        }
+                    ])
+                    .select()
+                    .single();
 
-                const result = await response.json();
-                
-                if (result.metadata && result.metadata.id) {
-                    currentBinId = result.metadata.id;
-                    localStorage.setItem('roomMapping_' + currentRoomCode, currentBinId);
-                    
-                    document.getElementById('displayRoomCode').textContent = currentRoomCode;
-                    document.getElementById('roomActions').classList.add('hidden');
-                    document.getElementById('roomCreatedView').classList.remove('hidden');
-                    showStatus('Room created successfully!', 'success');
-                } else {
-                    throw new Error('Failed to create room');
-                }
+                if (error) throw error;
+
+                currentRoomId = data.id;
+                document.getElementById('displayRoomCode').textContent = currentRoomCode;
+                document.getElementById('roomActions').classList.add('hidden');
+                document.getElementById('roomCreatedView').classList.remove('hidden');
+                showStatus('✅ Room created successfully!', 'success');
             } catch (error) {
                 console.error('Error creating room:', error);
-                showStatus('Error creating room. Please check your API key and try again.', 'error');
+                showStatus('❌ Error creating room: ' + error.message, 'error');
             }
         }
 
@@ -725,22 +677,26 @@
             showStatus('Joining room...', 'info');
             currentRoomCode = code;
 
-            // Try to get bin ID from localStorage first
-            let binId = localStorage.getItem('roomMapping_' + currentRoomCode);
+            try {
+                const { data, error } = await supabase
+                    .from('secret_santa_rooms')
+                    .select('*')
+                    .eq('room_code', currentRoomCode)
+                    .single();
 
-            if (!binId) {
-                showStatus('Room code not found. Make sure you entered the correct code.', 'error');
-                return;
-            }
+                if (error || !data) {
+                    showStatus('❌ Room not found. Please check the code and try again.', 'error');
+                    return;
+                }
 
-            currentBinId = binId;
-            
-            // Try to load the room data
-            const data = await loadRoomData();
-            if (data) {
+                currentRoomId = data.id;
+                participants = data.participants || [];
+                matches = data.matches || [];
+                
                 startUsingRoom();
-            } else {
-                showStatus('Could not load room data. Please try again.', 'error');
+            } catch (error) {
+                console.error('Error joining room:', error);
+                showStatus('❌ Error joining room: ' + error.message, 'error');
             }
         }
 
@@ -750,92 +706,68 @@
             document.getElementById('currentRoomCode').textContent = currentRoomCode;
             
             localStorage.setItem('currentRoomCode', currentRoomCode);
-            localStorage.setItem('currentBinId', currentBinId);
+            localStorage.setItem('currentRoomId', currentRoomId);
             
+            setupRealtimeSync();
             loadRoomData();
-            startSync();
             renderCategories();
         }
 
-        async function saveRoomData(data) {
-            if (!currentBinId) return;
-
-            const roomData = {
-                roomCode: currentRoomCode,
-                participants: data.participants || participants,
-                matches: data.matches || matches,
-                updated: new Date().toISOString()
-            };
-
-            try {
-                // Use the API key if available, otherwise try without (read-only mode)
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
-                
-                if (apiKey) {
-                    headers['X-Master-Key'] = apiKey;
-                }
-
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${currentBinId}`, {
-                    method: 'PUT',
-                    headers: headers,
-                    body: JSON.stringify(roomData)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to save data');
-                }
-                
-                return true;
-            } catch (error) {
-                console.error('Error saving room data:', error);
-                alert('Error saving data. Please make sure you have an internet connection.');
-                return false;
-            }
+        function setupRealtimeSync() {
+            // Subscribe to changes on this room
+            syncChannel = supabase
+                .channel('room-' + currentRoomId)
+                .on('postgres_changes', 
+                    { 
+                        event: '*', 
+                        schema: 'public', 
+                        table: 'secret_santa_rooms',
+                        filter: 'id=eq.' + currentRoomId
+                    }, 
+                    (payload) => {
+                        console.log('Change received!', payload);
+                        loadRoomData();
+                    }
+                )
+                .subscribe();
         }
 
         async function loadRoomData() {
-            if (!currentBinId) return null;
-
             try {
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${currentBinId}/latest`, {
-                    headers: {
-                        'X-Master-Key': apiKey || '$2a$10$dummyKeyForPublicAccess'
-                    }
-                });
+                const { data, error } = await supabase
+                    .from('secret_santa_rooms')
+                    .select('*')
+                    .eq('id', currentRoomId)
+                    .single();
 
-                if (!response.ok) {
-                    throw new Error('Failed to load data');
-                }
+                if (error) throw error;
 
-                const result = await response.json();
+                participants = data.participants || [];
+                matches = data.matches || [];
                 
-                if (result.record) {
-                    participants = result.record.participants || [];
-                    matches = result.record.matches || [];
-                    updateParticipantCount();
-                    renderParticipants();
-                    renderMatches();
-                    return result.record;
-                }
-                
-                return null;
+                updateParticipantCount();
+                renderParticipants();
+                renderMatches();
             } catch (error) {
                 console.error('Error loading room data:', error);
-                return null;
             }
         }
 
-        function startSync() {
-            syncInterval = setInterval(() => {
-                loadRoomData();
-            }, 5000); // Sync every 5 seconds
-        }
+        async function saveRoomData() {
+            try {
+                const { error } = await supabase
+                    .from('secret_santa_rooms')
+                    .update({ 
+                        participants: participants,
+                        matches: matches,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', currentRoomId);
 
-        function stopSync() {
-            if (syncInterval) {
-                clearInterval(syncInterval);
+                if (error) throw error;
+            } catch (error) {
+                console.error('Error saving room data:', error);
+                alert('Error saving data. Please check your connection.');
             }
         }
 
@@ -952,7 +884,7 @@
             };
 
             participants.push(participant);
-            await saveRoomData({ participants, matches });
+            await saveRoomData();
             
             document.getElementById('nameInput').value = '';
             document.getElementById('monthInput').value = '';
@@ -1017,8 +949,7 @@
         async function deleteParticipant(id) {
             if (confirm('Are you sure you want to delete this participant?')) {
                 participants = participants.filter(p => p.id !== id);
-                await saveRoomData({ participants, matches });
-                renderParticipants();
+                await saveRoomData();
             }
         }
 
@@ -1056,12 +987,11 @@
                 receiver: receivers[index]
             }));
 
-            await saveRoomData({ participants, matches });
+            await saveRoomData();
             
             document.getElementById('findMatchTab').style.display = 'block';
             
-            alert('Matches generated! Everyone can now use the "Find My Match" tab to see who they\'re buying for.');
-            renderMatches();
+            alert('✅ Matches generated! Everyone can now use the "🔍 My Match" tab to see who they\'re buying for.');
         }
 
         function renderMatches() {
@@ -1218,32 +1148,37 @@
             document.getElementById('findMatchSection').classList.remove('hidden');
         }
 
-        window.onload = function() {
-            // Check for saved API key
-            const savedApiKey = localStorage.getItem('jsonbinApiKey');
-            if (savedApiKey) {
-                apiKey = savedApiKey;
-                document.getElementById('apiKeyInput').value = savedApiKey;
-                document.getElementById('apiKeySection').classList.add('hidden');
-                document.getElementById('roomActions').classList.remove('hidden');
-            }
-
-            // Check for saved room
+        window.onload = async function() {
             const savedRoomCode = localStorage.getItem('currentRoomCode');
-            const savedBinId = localStorage.getItem('currentBinId');
-            if (savedRoomCode && savedBinId) {
+            const savedRoomId = localStorage.getItem('currentRoomId');
+            
+            if (savedRoomCode && savedRoomId) {
                 currentRoomCode = savedRoomCode;
-                currentBinId = savedBinId;
-                loadRoomData().then(data => {
+                currentRoomId = savedRoomId;
+                
+                // Verify room still exists
+                try {
+                    const { data, error } = await supabase
+                        .from('secret_santa_rooms')
+                        .select('*')
+                        .eq('id', currentRoomId)
+                        .single();
+                    
                     if (data) {
+                        participants = data.participants || [];
+                        matches = data.matches || [];
                         startUsingRoom();
                     }
-                });
+                } catch (error) {
+                    console.log('Could not reload previous room');
+                }
             }
         };
 
         window.onbeforeunload = function() {
-            stopSync();
+            if (syncChannel) {
+                syncChannel.unsubscribe();
+            }
         };
     </script>
 </body>
