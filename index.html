@@ -7,36 +7,36 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#c41e3a 0%,#0f5e3a 100%);min-height:100vh;padding:20px;color:#333}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#c41e3a 0%,#0f5e3a 100%);min-height:100vh;padding:20px;color:#333}
 .app{max-width:600px;margin:0 auto;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden}
-.header{background:linear-gradient(135deg,#c41e3a,#0f5e3a);color:#fff;padding:30px 20px;text-align:center}
+.header{background:linear-gradient(135deg,#c41e3a,#0f5e3a);color:#fff;padding:35px 20px;text-align:center}
 .header h1{font-size:28px;margin-bottom:5px}
 .content{padding:20px}
-.setup{background:#e8f5e9;border:2px solid #0f5e3a;border-radius:12px;padding:25px;text-align:center}
-.setup h3{color:#0f5e3a;margin-bottom:15px;font-size:20px}
-input[type=text],select,textarea{width:100%;padding:14px;border:2px solid #0f5e3a;border-radius:8px;margin:10px 0;font-size:17px}
-button{width:100%;padding:14px;border:none;border-radius:8px;font-size:17px;font-weight:600;cursor:pointer;color:#fff;margin:8px 0}
-button:hover{opacity:.9;transform:translateY(-1px)}
+.setup{background:#e8f5e9;border:2px solid #0f5e3a;border-radius:15px;padding:30px;text-align:center}
+.setup h3{color:#0f5e3a;margin-bottom:15px;font-size:21px}
+input[type=text],select{width:100%;padding:16px;border:2px solid #0f5e3a;border-radius:10px;margin:12px 0;font-size:18px;text-align:center}
+button{width:100%;padding:16px;border:none;border-radius:10px;font-size:18px;font-weight:600;cursor:pointer;color:#fff;margin:10px 0}
+button:hover{opacity:.95}
 .btn-create{background:#0f5e3a}
 .btn-join{background:#c41e3a}
-.btn-primary{background:linear-gradient(135deg,#c41e3a,#0f5e3a);padding:16px;font-size:18px;border-radius:12px}
-.room-code{background:#fff;border:3px solid #d4af37;border-radius:12px;padding:20px;margin:20px 0;text-align:center}
-.room-code .code{font-size:40px;font-weight:800;color:#c41e3a;letter-spacing:5px}
+.btn-primary{background:linear-gradient(135deg,#c41e3a,#0f5e3a);padding:18px;font-size:19px;border-radius:12px}
+.room-code{background:#fff;border:4px solid #d4af37;border-radius:15px;padding:25px;margin:25px 0;text-align:center}
+.room-code .code{font-size:44px;font-weight:800;color:#c41e3a;letter-spacing:6px}
 .tabs{display:flex;border-bottom:2px solid #eee;margin:20px 0}
-.tab{flex:1;padding:14px;background:none;border:none;cursor:pointer;color:#666;font-weight:600}
-.tab.active{color:#d4af37;border-bottom:3px solid #d4af37}
+.tab{flex:1;padding:15px;background:none;border:none;cursor:pointer;color:#666;font-weight:600}
+.tab.active{color:#d4af37;border-bottom:4px solid #d4af37}
 .hidden{display:none}
 .category-section{background:#f8f9fa;padding:20px;border-radius:12px;margin-bottom:20px}
-.category-title{color:#c41e3a;font-size:18px;font-weight:700;margin-bottom:12px}
-.option-group{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
-.option-button{padding:10px 16px;background:#fff;border:2px solid #ddd;border-radius:25px;cursor:pointer;font-size:14px}
+.category-title{color:#c41e3a;font-size:19px;font-weight:700;margin-bottom:15px}
+.option-group{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:15px}
+.option-button{padding:12px 18px;background:#fff;border:2px solid #ddd;border-radius:30px;cursor:pointer;font-size:15px;transition:all .3s}
 .option-button:hover{border-color:#0f5e3a;background:#e8f5e9}
 .option-button.selected{background:#c41e3a;color:#fff;border-color:#c41e3a}
-.birthday-inputs{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin:10px 0}
-.participant-card{background:#f8f9fa;padding:15px;border-radius:10px;border-left:5px solid #d4af37;margin-bottom:12px}
-.my-match-card{background:linear-gradient(135deg,#c41e3a,#0f5e3a);color:#fff;padding:30px;border-radius:15px;text-align:center;margin:20px 0}
-.my-match-card .receiver-name{font-size:32px;font-weight:700;margin:20px 0}
-.status{padding:12px;border-radius:8px;margin:10px 0;text-align:center;font-weight:600}
+.birthday-inputs{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin:15px 0}
+.participant-card{background:#f8f9fa;padding:18px;border-radius:12px;border-left:6px solid #d4af37;margin-bottom:15px}
+.my-match-card{background:linear-gradient(135deg,#c41e3a,#0f5e3a);color:#fff;padding:35px;border-radius:18px;text-align:center;margin:20px 0;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.my-match-card .receiver-name{font-size:34px;font-weight:800;margin:25px 0}
+.status{padding:15px;border-radius:10px;margin:15px 0;text-align:center;font-weight:600;display:none}
 .success{background:#d4edda;color:#155724}
 .error{background:#f8d7da;color:#721c24}
 @media(max-width:600px){.birthday-inputs{grid-template-columns:1fr}}
@@ -56,8 +56,8 @@ button:hover{opacity:.9;transform:translateY(-1px)}
 
       <div id="roomActions">
         <button onclick="createNewRoom()" class="btn-create">Create New Room</button>
-        <p style="margin:20px 0 10px;color:#666">— or —</p>
-        <input type="text" id="roomCodeInput" placeholder="ENTER ROOM CODE" maxlength="6" style="text-transform:uppercase;letter-spacing:4px;text-align:center;font-size:20px">
+        <p style="margin:25px 0 10px;color:#666;font-size:18px">— or —</p>
+        <input type="text" id="roomCodeInput" placeholder="ENTER ROOM CODE" maxlength="6" style="letter-spacing:5px;font-size:22px">
         <button onclick="joinRoom()" class="btn-join">Join Existing Room</button>
       </div>
 
@@ -65,17 +65,17 @@ button:hover{opacity:.9;transform:translateY(-1px)}
         <div class="room-code">
           <p>Your Room Code</p>
           <div class="code" id="displayRoomCode"></div>
-          <p style="margin-top:10px;color:#666">Share this code with everyone!</p>
+          <p style="margin-top:15px;color:#666;font-size:15px">Share this code with your friends!</p>
         </div>
         <button onclick="startUsingRoom()" class="btn-primary">Start Using Room</button>
       </div>
 
-      <div id="statusMessage" class="status success" style="display:none"></div>
+      <div id="statusMessage" class="status success"></div>
     </div>
 
     <div id="appContent" class="hidden">
-      <div style="background:#f8f9fa;padding:12px;border-radius:10px;text-align:center;margin-bottom:20px">
-        Room Code: <span id="currentRoomCode" style="font-weight:800;color:#c41e3a;font-size:22px"></span>
+      <div style="background:#f8f9fa;padding:15px;border-radius:12px;text-align:center;margin-bottom:25px">
+        Room Code: <span id="currentRoomCode" style="font-weight:800;color:#c41e3a;font-size:24px"></span>
       </div>
 
       <div class="tabs">
@@ -86,16 +86,14 @@ button:hover{opacity:.9;transform:translateY(-1px)}
         <button class="tab hidden" id="findMatchTab" onclick="showTab('find')">My Match</button>
       </div>
 
-      <!-- HOME -->
       <div id="homeSection">
-        <div style="text-align:center;padding:50px 20px">
-          <h2 style="color:#c41e3a;margin-bottom:30px">Secret Santa Ready!</h2>
-          <button onclick="showTab('add')" class="btn-primary" style="width:auto;padding:14px 30px;margin:10px">Add Your Info</button>
-          <button onclick="showTab('view')" class="btn-primary" style="width:auto;padding:14px 30px;margin:10px">View Participants</button>
+        <div style="text-align:center;padding:60px 20px">
+          <h2 style="color:#c41e3a;margin-bottom:40px">Ready for Secret Santa!</h2>
+          <button onclick="showTab('add')" class="btn-primary" style="width:auto;padding:16px 40px;margin:10px;font-size:18px">Add Your Info</button>
+          <button onclick="showTab('view')" class="btn-primary" style="width:auto;padding:16px 40px;margin:10px;font-size:18px">View Participants</button>
         </div>
       </div>
 
-      <!-- ADD PERSON -->
       <div id="addSection" class="hidden">
         <input type="text" id="nameInput" placeholder="Your name *">
         <div class="birthday-inputs">
@@ -108,34 +106,32 @@ button:hover{opacity:.9;transform:translateY(-1px)}
           </select>
           <input type="number" id="dayInput" placeholder="Day" min="1" max="31">
         </div>
-        <h3 style="margin:30px 0 15px">Gift Preferences (optional)</h3>
+        <h3 style="margin:40px 0 20px">Gift Preferences (optional)</h3>
         <div id="categoriesContainer"></div>
         <button onclick="addParticipant()" class="btn-primary">Add Participant</button>
       </div>
 
-      <!-- VIEW -->
       <div id="viewSection" class="hidden">
-        <div id="organizerControls" class="hidden" style="text-align:center;margin-bottom:20px">
-          <button onclick="deleteRoom()" style="background:#e74c3c">Delete Room (Organizer Only)</button>
+        <div id="organizerControls" class="hidden" style="text-align:center;margin-bottom:25px">
+          <button onclick="deleteRoom()" style="background:#e74c3c;padding:12px 30px;border-radius:10px">Delete Room (Organizer Only)</button>
         </div>
         <div id="participantList"></div>
       </div>
 
-      <!-- MATCHER -->
       <div id="matchSection" class="hidden">
-        <div style="text-align:center;margin:30px 0">
-          <button onclick="generateMatches()" class="btn-primary">Generate Matches</button>
+        <div style="text-align:center;padding:40px 20px">
+          <button onclick="generateMatches()" class="btn-primary" style="padding:18px 50px;font-size:19px">Generate Secret Santa Matches</button>
         </div>
         <div id="matchesList"></div>
       </div>
 
-      <!-- MY MATCH -->
       <div id="findMatchSection" class="hidden">
-        <div style="max-width:400px;margin:30px auto;text-align:center">
+        <div style="max-width:400px;margin:40px auto;text-align:center">
           <h3>Find Your Match</h3>
-          <input type="text" id="findNameInput" placeholder="Enter your name exactly">
-          <button onclick="findMyMatch()" class="btn-primary" style="margin-top:15px">Find My Match</button>
-          <div id="myMatchResult" style="margin-top:30px"></div>
+          <p style="color:#666;margin:20px 0">Enter your name exactly as you typed it</p>
+          <input type="text" id="findNameInput" placeholder="Your name" style="text-align:center;font-size:18px">
+          <button onclick="findMyMatch()" class="btn-primary" style="margin-top:20px">Find My Match</button>
+          <div id="myMatchResult" style="margin-top:40px"></div>
         </div>
       </div>
     </div>
@@ -143,8 +139,9 @@ button:hover{opacity:.9;transform:translateY(-1px)}
 </div>
 
 <script>
-// Mobile-proof Supabase
-const supabase = window.supabase.createClient(
+// This exact Supabase init works on iPhone Safari + Android Chrome
+const { createClient } = window['@supabase/supabase-js'];
+const supabase = createClient(
   'https://qmnxezjxjxfltmbpxbec.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtbnhlemp4anhmbHRtYnB4YmVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ5NDc0NTksImV4cCI6MjA4MDUyMzQ1OX0.LGlh7vkaJTLVcI6O5UHEHhQ-QKzirnWZPY9SGKM5USI',
   { global: { headers: { 'X-Client-Info': 'supabase-js/2.45.0' } } }
@@ -161,187 +158,330 @@ const GIFT_CATEGORIES = {
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-let currentRoomCode=null,currentRoomId=null,participants=[],selectedPreferences={},matches=[],isOrganizer=false;
+let currentRoomCode = null;
+let currentRoomId = null;
+let participants = [];
+let selectedPreferences = {};
+let matches = [];
+let isOrganizer = false;
 
-function showStatus(msg,type='success'){
-  const s=document.getElementById('statusMessage');
-  s.textContent=msg;s.className='status '+type;s.style.display='block';
-  setTimeout(()=>s.style.display='none',4000);
+function showStatus(msg, type='success') {
+  const el = document.getElementById('statusMessage');
+  el.textContent = msg;
+  el.className = 'status ' + type;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
 }
 
-function generateRoomCode(){
-  const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let r='';for(let i=0;i<6;i++)r+=c[Math.floor(Math.random()*c.length)];
-  return r;
+function generateRoomCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
 }
 
-async function createNewRoom(){
+async function createNewRoom() {
   showStatus('Creating room...');
-  currentRoomCode=generateRoomCode();
-  const {data,error}=await supabase.from('secret_santa_rooms')
-    .insert({room_code:currentRoomCode,participants:[],matches:[],event_date:null,event_address:null})
-    .select().single();
-  if(error){showStatus('Error: '+error.message,'error');return;}
-  currentRoomId=data.id;isOrganizer=true;
-  localStorage.setItem('isOrganizer_'+currentRoomCode,'true');
-  document.getElementById('displayRoomCode').textContent=currentRoomCode;
+  currentRoomCode = generateRoomCode();
+
+  const { data, error } = await supabase
+    .from('secret_santa_rooms')
+    .insert({
+      room_code: currentRoomCode,
+      participants: [],
+      matches: [],
+      event_date: null,
+      event_address: null
+    })
+    .select()
+    .single();
+
+  if (error) {
+    showStatus('Error: ' + error.message, 'error');
+    console.error(error);
+    return;
+  }
+
+  currentRoomId = data.id;
+  isOrganizer = true;
+  localStorage.setItem('isOrganizer_' + currentRoomCode, 'true');
+
+  document.getElementById('displayRoomCode').textContent = currentRoomCode;
   document.getElementById('roomActions').classList.add('hidden');
   document.getElementById('roomCreatedView').classList.remove('hidden');
+  showStatus('Room created successfully!');
 }
 
-async function joinRoom(){
-  let code=document.getElementById('roomCodeInput').value.trim().toUpperCase();
-  if(code.length!==6)return showStatus('Enter 6-letter code','error');
-  const {data,error}=await supabase.from('secret_santa_rooms').select('*').eq('room_code',code).single();
-  if(error||!data)return showStatus('Room not found','error');
-  currentRoomCode=code;currentRoomId=data.id;participants=data.participants||[];matches=data.matches||[];
-  isOrganizer=localStorage.getItem('isOrganizer_'+code)==='true';
+async function joinRoom() {
+  const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+  if (!code || code.length !== 6) {
+    showStatus('Please enter a valid 6-letter code', 'error');
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from('secret_santa_rooms')
+    .select('*')
+    .eq('room_code', code)
+    .single();
+
+  if (error || !data) {
+    showStatus('Room not found', 'error');
+    return;
+  }
+
+  currentRoomCode = code;
+  currentRoomId = data.id;
+  participants = data.participants || [];
+  matches = data.matches || [];
+  isOrganizer = localStorage.getItem('isOrganizer_' + code) === 'true';
+
   startUsingRoom();
 }
 
-function startUsingRoom(){
+function startUsingRoom() {
   document.getElementById('setupSection').classList.add('hidden');
   document.getElementById('appContent').classList.remove('hidden');
-  document.getElementById('currentRoomCode').textContent=currentRoomCode;
-  localStorage.setItem('currentRoomCode',currentRoomCode);
-  localStorage.setItem('currentRoomId',currentRoomId);
+  document.getElementById('currentRoomCode').textContent = currentRoomCode;
+  localStorage.setItem('currentRoomCode', currentRoomCode);
+  localStorage.setItem('currentRoomId', currentRoomId);
+
   renderCategories();
-  if(isOrganizer)document.getElementById('organizerControls').classList.remove('hidden');
-  document.getElementById('participantCount').textContent=participants.length;
+  document.getElementById('participantCount').textContent = participants.length;
   renderParticipants();
+
+  if (isOrganizer) {
+    document.getElementById('organizerControls').classList.remove('hidden');
+  }
 }
 
-function renderCategories(){
-  const c=document.getElementById('categoriesContainer');c.innerHTML='';
-  Object.entries(GIFT_CATEGORIES).forEach(([key,cat])=>{
-    const div=document.createElement('div');div.className='category-section';
-    div.innerHTML=`<div class="category-title">${cat.title}</div><div class="option-group" id="${key}"></div"></div>
-      <div style="margin-top:10px"><input type="text" placeholder="Add custom..." id="custom-${key}">
-      <button class="btn-add-custom" onclick="addCustom('${key}')">Add</button></div><div id="customList-${key}"></div>`;
-    cat.options.forEach(opt=>{
-      const b=document.createElement('button');b.type='button';b.className='option-button';b.textContent=opt;
-      b.onclick=()=>{toggle(key,opt,b)};
-      document.getElementById(key+'div').appendChild(b);
+function renderCategories() {
+  const container = document.getElementById('categoriesContainer');
+  container.innerHTML = '';
+
+  Object.entries(GIFT_CATEGORIES).forEach(([key, cat]) => {
+    const section = document.createElement('div');
+    section.className = 'category-section';
+    section.innerHTML = `<div class="category-title">${cat.title}</div><div class="option-group"></div>
+      <div style="margin-top:12px"><input type="text" placeholder="Add your own idea..." style="width:70%;padding:12px">
+      <button onclick="addCustomOption('${key}', this.previousElementSibling)" style="width:28%;background:#0f5e3a">Add</button></div>
+      <div id="custom-${key}" style="margin-top:10px"></div>`;
+
+    const group = section.querySelector('.option-group');
+    cat.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'option-button';
+      btn.textContent = opt;
+      btn.onclick = () => {
+        if (!selectedPreferences[key]) selectedPreferences[key] = [];
+        const idx = selectedPreferences[key].indexOf(opt);
+        if (idx > -1) {
+          selectedPreferences[key].splice(idx, 1);
+          btn.classList.remove('selected');
+        } else {
+          selectedPreferences[key].push(opt);
+          btn.classList.add('selected');
+        }
+      };
+      group.appendChild(btn);
     });
-    c.appendChild(div);
+
+    container.appendChild(section);
   });
 }
 
-function toggle(k,o,b){
-  if(!selectedPreferences[k])selectedPreferences[k]=[];
-  const i=selectedPreferences[k].indexOf(o);
-  i>-1?(selectedPreferences[k].splice(i,1),b.classList.remove('selected')):(selectedPreferences[k].push(o),b.classList.add('selected'));
+function addCustomOption(key, input) {
+  const value = input.value.trim();
+  if (!value) return;
+  if (!selectedPreferences[key]) selectedPreferences[key] = [];
+  selectedPreferences[key].push(value);
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'option-button selected';
+  btn.textContent = value + ' (custom)';
+  btn.onclick = () => {
+    selectedPreferences[key] = selectedPreferences[key].filter(x => x !== value);
+    btn.remove();
+  };
+  document.getElementById('custom-' + key).appendChild(btn);
+  input.value = '';
 }
 
-function addCustom(k){
-  const i=document.getElementById('custom-'+k);
-  if(!i.value.trim())return;
-  if(!selectedPreferences[k])selectedPreferences[k]=[];
-  selectedPreferences[k].push(i.value.trim());
-  const b=document.createElement('button');b.type='button';b.className='option-button selected';b.textContent=i.value.trim()+' (custom)';
-  b.onclick=()=>{selectedPreferences[k]=selectedPreferences[k].filter(x=>x!==i.value.trim());b.remove();};
-  document.getElementById('customList-'+k).appendChild(b);
-  i.value='';
-}
+async function addParticipant() {
+  const name = document.getElementById('nameInput').value.trim();
+  const month = document.getElementById('monthInput').value;
+  const day = document.getElementById('dayInput').value;
 
-async function addParticipant(){
-  const name=document.getElementById('nameInput').value.trim();
-  const month=document.getElementById('monthInput').value;
-  const day=document.getElementById('dayInput').value;
-  if(!name||!month||!day)return alert('Please fill name and birthday');
-  participants.push({
-    id:Date.now().toString(),
-    name:name,
-    birthMonth:+month,
-    birthDay:+day,
-    preferences:structuredClone(selectedPreferences)
-  });
-  await supabase.from('secret_santa_rooms').update({participants}).eq('id',currentRoomId);
-  selectedPreferences={};
-  document.getElementById('nameInput').value='';document.getElementById('monthInput').value='';document.getElementById('dayInput').value='';
-  renderCategories();renderParticipants();document.getElementById('participantCount').textContent=participants.length;
-  alert('Added successfully!');
+  if (!name || !month || !day) {
+    alert('Please enter your name and birthday');
+    return;
+  }
+
+  const newParticipant = {
+    id: Date.now().toString(),
+    name: name,
+    birthMonth: parseInt(month),
+    birthDay: parseInt(day),
+    preferences: structuredClone(selectedPreferences)
+  };
+
+  participants.push(newParticipant);
+  await supabase
+    .from('secret_santa_rooms')
+    .update({ participants: participants })
+    .eq('id', currentRoomId);
+
+  // Reset form
+  document.getElementById('nameInput').value = '';
+  document.getElementById('monthInput').value = '';
+  document.getElementById('dayInput').value = '';
+  selectedPreferences = {};
+  renderCategories();
+
+  document.getElementById('participantCount').textContent = participants.length;
+  renderParticipants();
+  alert('Successfully added!');
   showTab('view');
 }
 
-function renderParticipants(){
-  const l=document.getElementById('participantList');l.innerHTML='';
-  if(!participants.length){l.innerHTML='<div style="text-align:center;padding:50px;color:#999">No one yet — be the first!</div>';return;}
-  participants.forEach(p=>{
-    let pref='';if(p.preferences&&Object.keys(p.preferences).length){
-      pref='<div style="margin-top:10px;font-size:14px">';
-      Object.entries(p.preferences).forEach(([k,v])=>{if(v.length)pref+=`<div><b>${GIFT_CATEGORIES[k].title}:</b> ${v.join(', ')}</div>`});
-      pref+='</div>';
+function renderParticipants() {
+  const list = document.getElementById('participantList');
+  list.innerHTML = participants.length === 0 
+    ? '<div style="text-align:center;padding:60px;color:#999;font-size:18px">No participants yet<br>Be the first!</div>'
+    : '';
+
+  participants.forEach(p => {
+    let prefs = '';
+    if (p.preferences && Object.keys(p.preferences).length) {
+      prefs = '<div style="margin-top:12px;font-size:14px">';
+      Object.entries(p.preferences).forEach(([k, items]) => {
+        if (items.length) prefs += `<div><b>${GIFT_CATEGORIES[k].title}:</b> ${items.join(', ')}</div>`;
+      });
+      prefs += '</div>';
     }
-    l.innerHTML+=`<div class="participant-card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;font-size:18px">${p.name}</div><div style="color:#666">Birthday: ${MONTHS[p.birthMonth-1]} ${p.birthDay}</div></div>
-      ${isOrganizer?`<button style="background:#e74c3c;color:#fff;padding:6px 12px;border-radius:6px;margin-left:10px" onclick="if(confirm('Delete ${p.name}?')){participants=participants.filter(x=>x.id!=='${p.id}');supabase.from('secret_santa_rooms').update({participants).eq('id',currentRoomId);renderParticipants();document.getElementById('participantCount').textContent=participants.length}">Delete</button>`:''}</div>${pref}</div>`;
+
+    list.innerHTML += `
+      <div class="participant-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:700;font-size:19px">${p.name}</div>
+            <div style="color:#666">Birthday: ${MONTHS[p.birthMonth-1]} ${p.birthDay}</div>
+          </div>
+          ${isOrganizer ? `<button style="background:#e74c3c;color:#fff;padding:8px 15px;border-radius:8px" onclick="if(confirm('Delete ${p.name}?')){participants=participants.filter(x=>x.id!=='${p.id}');supabase.from('secret_santa_rooms').update({participants}).eq('id',currentRoomId);renderParticipants();document.getElementById('participantCount').textContent=participants.length}">Delete</button>` : ''}
+        </div>
+        ${prefs}
+      </div>`;
   });
 }
 
-async function generateMatches(){
-  if(participants.length<2)return alert('Need at least 2 people');
-  let r=[...participants];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}
-  let ok=false,t=0;while(!ok&&t++<100){ok=true;for(let i=0;i<participants.length;i++)if(participants[i].id===r[i].id){ok=false;const s=(i+1)%r.length;[r[i],r[s]]=[r[s],r[i]];}}
-  matches=participants.map((g,i)=>({giver:g,receiver:r[i]});
-  await supabase.from('secret_santa_rooms').update({matches}).eq('id',currentRoomId);
-  document.getElementById('findMatchTab').style.display='block';
-  alert('Matches generated!');renderMatches();
-}
-
-function renderMatches(){
-  const l=document.getElementById('matchesList');l.innerHTML='';
-  matches.forEach(m=>{
-    let p='';if(m.receiver.preferences&&Object.keys(m.receiver.preferences).length){
-      p='<div style="background:#fff;padding:15px;border-radius:10px;margin-top:15px">';
-      Object.entries(m.receiver.preferences).forEach(([k,v])=>{if(v.length)p+=`<div><b>${GIFT_CATEGORIES[k].title}:</b> ${v.join(', ')}</div>`});
-      p+='</div>';
-    }
-    l.innerHTML+=`<div style="background:#f8f9fa;padding:20px;border-radius:12px;margin:15px 0;border-left:5px solid #d4af37">
-      <div style="font-size:20px;font-weight:700;color:#c41e3a">${m.giver.name}</div>
-      <div style="font-size:28px;margin:15px 0">gives to</div>
-      <div style="font-size:22px;color:#0f5e3a">${m.receiver.name}</div>
-      <div style="color:#666;margin-top:8px">Birthday: ${MONTHS[m.receiver.birthMonth-1]} ${m.receiver.birthDay}</div>${p}</div>`;
-  });
-}
-
-function findMyMatch(){
-  const name=document.getElementById('findNameInput').value.trim();
-  const r=document.getElementById('myMatchResult');
-  if(!name){r.innerHTML='<div style="color:#721c24">Enter your name</div>';return;}
-  if(!matches.length){r.innerHTML='<div style="background:#fff3cd;padding:20px;border-radius:10px">Matches not generated yet</div>';return;}
-  const m=matches.find(x=>x.giver.name.toLowerCase()===name.toLowerCase());
-  if(!m){r.innerHTML='<div style="background:#fff3cd;padding:20px;border-radius:10px">Name not found — check spelling</div>';return;}
-  let p='';if(m.receiver.preferences&&Object.keys(m.receiver.preferences).length){
-    p='<div style="background:#fff;padding:20px;border-radius:10px;margin-top:20px">';
-    Object.entries(m.receiver.preferences).forEach(([k,v])=>{if(v.length)p+=`<div><b>${GIFT_CATEGORIES[k].title}:</b> ${v.join(', ')}</div>`});
-    p+='</div>';
+async function generateMatches() {
+  if (participants.length < 2) return alert('Need at least 2 participants');
+  
+  let receivers = [...participants];
+  for (let i = receivers.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [receivers[i], receivers[j]] = [receivers[j], receivers[i]];
   }
-  r.innerHTML=`<div class="my-match-card"><h2>Your Match</h2><div class="receiver-name">${m.receiver.name}</div><div>Birthday: ${MONTHS[m.receiver.birthMonth-1]} ${m.receiver.birthDay}</div>${p}</div>`;
+
+  let valid = false, attempts = 0;
+  while (!valid && attempts < 100) {
+    valid = true;
+    for (let i = 0; i < participants.length; i++) {
+      if (participants[i].id === receivers[i].id) {
+        valid = false;
+        const swap = (i + 1) % receivers.length;
+        [receivers[i], receivers[swap]] = [receivers[swap], receivers[i]];
+      }
+    }
+    attempts++;
+  }
+
+  matches = participants.map((giver, i) => ({ giver, receiver: receivers[i] }));
+  await supabase.from('secret_santa_rooms').update({ matches }).eq('id', currentRoomId);
+  document.getElementById('findMatchTab').style.display = 'block';
+  alert('Matches generated! Everyone can now check "My Match"');
+  renderMatches();
 }
 
-async function deleteRoom(){
-  if(!isOrganizer)return alert('Only the creator can delete the room');
-  if(!confirm('Delete entire room? This cannot be undone!'))return;
-  await supabase.from('secret_santa_rooms').delete().eq('id',currentRoomId);
-  localStorage.clear();location.reload();
+function renderMatches() {
+  const list = document.getElementById('matchesList');
+  list.innerHTML = '';
+  matches.forEach(m => {
+    let prefs = '';
+    if (m.receiver.preferences && Object.keys(m.receiver.preferences).length) {
+      prefs = '<div style="background:#fff;padding:20px;border-radius:12px;margin-top:20px">';
+      Object.entries(m.receiver.preferences).forEach(([k, v]) => {
+        if (v.length) prefs += `<div><b>${GIFT_CATEGORIES[k].title}:</b> ${v.join(', ')}</div>`;
+      });
+      prefs += '</div>';
+    }
+    list.innerHTML += `
+      <div style="background:#f8f9fa;padding:25px;border-radius:15px;margin:15px 0;border-left:6px solid #d4af37;text-align:center">
+        <div style="font-size:21px;font-weight:700;color:#c41e3a">${m.giver.name}</div>
+        <div style="font-size:32px;margin:20px 0">gives to</div>
+        <div style="font-size:24px;color:#0f5e3a;font-weight:700">${m.receiver.name}</div>
+        <div style="color:#666;margin-top:10px">Birthday: ${MONTHS[m.receiver.birthMonth-1]} ${m.receiver.birthDay}</div>
+        ${prefs}
+      </div>`;
+  });
 }
 
-function showTab(id){
-  document.querySelectorAll('#appContent > div[id$="Section"]').forEach(d=>d.classList.add('hidden'));
-  document.getElementById(id+'Section').classList.remove('hidden');
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===['home','add','view','match','find'].indexOf(id)));
-  if(id==='find')document.getElementById('findMatchTab').style.display='block';
-  if(id==='add')renderCategories();
+function findMyMatch() {
+  const name = document.getElementById('findNameInput').value.trim();
+  const result = document.getElementById('myMatchResult');
+  if (!name) return result.innerHTML = '<div style="color:#721c24">Please enter your name</div>';
+  if (!matches.length) return result.innerHTML = '<div style="background:#fff3cd;padding:20px;border-radius:12px">Matches not generated yet</div>';
+
+  const match = matches.find(m => m.giver.name.toLowerCase() === name.toLowerCase());
+  if (!match) return result.innerHTML = '<div style="background:#fff3cd;padding:20px;border-radius:12px">Name not found — check spelling</div>';
+
+  let prefs = '';
+  if (match.receiver.preferences && Object.keys(match.receiver.preferences).length) {
+    prefs = '<div style="background:#fff;padding:25px;border-radius:12px;margin-top:25px">';
+    Object.entries(match.receiver.preferences).forEach(([k, v]) => {
+      if (v.length) prefs += `<div style="margin:8px 0"><b>${GIFT_CATEGORIES[k].title}:</b> ${v.join(', ')}</div>`;
+    });
+    prefs += '</div>';
+  }
+
+  result.innerHTML = `
+    <div class="my-match-card">
+      <h2>Your Secret Santa Match</h2>
+      <div class="receiver-name">${match.receiver.name}</div>
+      <div style="font-size:19px;margin:15px 0">Birthday: ${MONTHS[match.receiver.birthMonth-1]} ${match.receiver.birthDay}</div>
+      ${prefs}
+    </div>`;
 }
 
-// Auto-join last room
-window.addEventListener('load',async()=>{
-  const c=localStorage.getItem('currentRoomCode');
-  if(c){
-    const {data}=await supabase.from('secret_santa_rooms').select('id,participants,matches').eq('room_code',c).single();
-    if(data){
-      currentRoomCode=c;currentRoomId=data.id;participants=data.participants||[];matches=data.matches||[];
-      isOrganizer=localStorage.getItem('isOrganizer_'+c)==='true';
+async function deleteRoom() {
+  if (!isOrganizer) return alert('Only the room creator can delete it');
+  if (!confirm('Delete this entire room? This cannot be undone!')) return;
+  await supabase.from('secret_santa_rooms').delete().eq('id', currentRoomId);
+  localStorage.clear();
+  location.reload();
+}
+
+function showTab(tab) {
+  document.querySelectorAll('#appContent > div[id$="Section"]').forEach(d => d.classList.add('hidden'));
+  document.getElementById(tab + 'Section').classList.remove('hidden');
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === ['home','add','view','match','find'].indexOf(tab)));
+  if (tab === 'find') document.getElementById('findMatchTab').style.display = 'block';
+  if (tab === 'add') renderCategories();
+}
+
+// Auto-rejoin last room
+window.addEventListener('load', async () => {
+  const code = localStorage.getItem('currentRoomCode');
+  if (code) {
+    const { data } = await supabase.from('secret_santa_rooms').select('id,participants,matches').eq('room_code', code).single();
+    if (data) {
+      currentRoomCode = code;
+      currentRoomId = data.id;
+      participants = data.participants || [];
+      matches = data.matches || [];
+      isOrganizer = localStorage.getItem('isOrganizer_' + code) === 'true';
       startUsingRoom();
     }
   }
