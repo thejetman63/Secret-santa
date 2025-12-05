@@ -506,10 +506,70 @@
                 </div>
 
                 <div class="tabs">
-                    <button class="tab active" onclick="showAddTab()">➕ Add Person</button>
+                    <button class="tab active" onclick="showHomeTab()">🏠 Home</button>
+                    <button class="tab" onclick="showAddTab()">➕ Add Person</button>
                     <button class="tab" onclick="showViewTab()">👥 View All (<span id="participantCount">0</span>)</button>
                     <button class="tab" onclick="showMatchTab()">🎁 Matcher</button>
                     <button class="tab" id="findMatchTab" onclick="showFindMatchTab()" style="display: none;">🔍 My Match</button>
+                </div>
+
+                <div id="homeSection">
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <h2 style="color: #c41e3a; font-size: 32px; margin-bottom: 20px;">🎅 Secret Santa Event</h2>
+                        
+                        <div id="countdownDisplay" class="hidden">
+                            <div style="background: linear-gradient(135deg, #c41e3a 0%, #0f5e3a 100%); color: white; padding: 30px; border-radius: 15px; margin: 20px 0;">
+                                <p style="font-size: 18px; margin-bottom: 15px; opacity: 0.9;">Time Until Gift Exchange:</p>
+                                <div id="countdownTimer" style="font-size: 48px; font-weight: 700; letter-spacing: 2px;"></div>
+                            </div>
+                            
+                            <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; margin: 20px 0; text-align: left;">
+                                <h3 style="color: #c41e3a; margin-bottom: 15px; text-align: center;">📅 Event Details</h3>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-weight: 600; color: #0f5e3a; margin-bottom: 5px;">📆 Date & Time:</div>
+                                    <div id="eventDateTime" style="font-size: 16px; color: #333;"></div>
+                                </div>
+                                <div id="addressDisplay" class="hidden">
+                                    <div style="font-weight: 600; color: #0f5e3a; margin-bottom: 5px;">📍 Location:</div>
+                                    <div id="eventAddressText" style="font-size: 16px; color: #333;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="noEventMessage" style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 10px; padding: 20px; color: #856404;">
+                            <p style="font-size: 18px; margin-bottom: 10px;">⏰ Event Date Not Set</p>
+                            <p style="font-size: 14px;">The organizer hasn't set the gift exchange date yet. Check back later!</p>
+                        </div>
+
+                        <div id="eventSetter" class="hidden" style="background: #e8f5e9; border: 2px solid #0f5e3a; border-radius: 10px; padding: 20px; margin-top: 20px;">
+                            <h3 style="color: #0f5e3a; margin-bottom: 15px;">📅 Set Event Details (Organizer Only)</h3>
+                            <div class="form-group">
+                                <label>Event Date:</label>
+                                <input type="date" id="eventDateInput" style="text-align: center;">
+                            </div>
+                            <div class="form-group">
+                                <label>Event Time:</label>
+                                <input type="time" id="eventTimeInput" style="text-align: center;">
+                            </div>
+                            <div class="form-group">
+                                <label>Event Address/Location:</label>
+                                <textarea id="eventAddressInput" placeholder="Enter the address or location details..." style="min-height: 80px; resize: vertical;"></textarea>
+                            </div>
+                            <button onclick="saveEventDate()" style="width: 100%; background: #0f5e3a; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+                                Save Event Details
+                            </button>
+                        </div>
+
+                        <div style="margin-top: 40px;">
+                            <h3 style="color: #333; margin-bottom: 15px;">Quick Links</h3>
+                            <button onclick="showAddTab()" style="background: white; border: 2px solid #0f5e3a; color: #0f5e3a; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; margin: 5px;">
+                                ➕ Add Your Info
+                            </button>
+                            <button onclick="showViewTab()" style="background: white; border: 2px solid #d4af37; color: #d4af37; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; margin: 5px;">
+                                👥 View Participants
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="addSection">
@@ -548,6 +608,11 @@
                 </div>
 
                 <div id="viewSection" class="hidden">
+                    <div id="organizerControls" class="hidden" style="margin-bottom: 20px; text-align: center;">
+                        <button onclick="deleteRoom()" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            🗑️ Delete Room (Organizer Only)
+                        </button>
+                    </div>
                     <div class="participant-list" id="participantList"></div>
                 </div>
 
@@ -621,6 +686,8 @@
         let matches = [];
         let syncChannel = null;
         let isOrganizer = false; // Track if this user created the room
+        let eventDate = null; // Store the event date/time
+        let eventAddress = null; // Store the event address
 
         function showStatus(message, type = 'info') {
             const statusDiv = document.getElementById('statusMessage');
@@ -649,7 +716,9 @@
                         { 
                             room_code: currentRoomCode,
                             participants: [],
-                            matches: []
+                            matches: [],
+                            event_date: null,
+                            event_address: null
                         }
                     ])
                     .select()
@@ -695,6 +764,8 @@
                 currentRoomId = data.id;
                 participants = data.participants || [];
                 matches = data.matches || [];
+                eventDate = data.event_date;
+                eventAddress = data.event_address;
                 
                 // Check if this user is the organizer
                 isOrganizer = localStorage.getItem('isOrganizer_' + currentRoomCode) === 'true';
@@ -750,10 +821,13 @@
 
                 participants = data.participants || [];
                 matches = data.matches || [];
+                eventDate = data.event_date;
+                eventAddress = data.event_address;
                 
                 updateParticipantCount();
                 renderParticipants();
                 renderMatches();
+                updateCountdown();
             } catch (error) {
                 console.error('Error loading room data:', error);
             }
@@ -766,6 +840,8 @@
                     .update({ 
                         participants: participants,
                         matches: matches,
+                        event_date: eventDate,
+                        event_address: eventAddress,
                         updated_at: new Date().toISOString()
                     })
                     .eq('id', currentRoomId);
@@ -962,6 +1038,144 @@
             }
         }
 
+        async function saveEventDate() {
+            const dateInput = document.getElementById('eventDateInput').value;
+            const timeInput = document.getElementById('eventTimeInput').value;
+            const addressInput = document.getElementById('eventAddressInput').value;
+
+            if (!dateInput || !timeInput) {
+                alert('Please select both date and time');
+                return;
+            }
+
+            eventDate = dateInput + 'T' + timeInput;
+            eventAddress = addressInput.trim() || null;
+            await saveRoomData();
+            
+            alert('✅ Event details saved!');
+            updateCountdown();
+        }
+
+        function updateCountdown() {
+            const countdownDisplay = document.getElementById('countdownDisplay');
+            const noEventMessage = document.getElementById('noEventMessage');
+            const eventSetter = document.getElementById('eventSetter');
+            const addressDisplay = document.getElementById('addressDisplay');
+            const eventAddressText = document.getElementById('eventAddressText');
+
+            if (isOrganizer) {
+                eventSetter.classList.remove('hidden');
+                
+                // Pre-fill inputs if date/address is set
+                if (eventDate) {
+                    const [date, time] = eventDate.split('T');
+                    document.getElementById('eventDateInput').value = date;
+                    document.getElementById('eventTimeInput').value = time;
+                }
+                if (eventAddress) {
+                    document.getElementById('eventAddressInput').value = eventAddress;
+                }
+            } else {
+                eventSetter.classList.add('hidden');
+            }
+
+            if (!eventDate) {
+                countdownDisplay.classList.add('hidden');
+                noEventMessage.classList.remove('hidden');
+                return;
+            }
+
+            countdownDisplay.classList.remove('hidden');
+            noEventMessage.classList.add('hidden');
+
+            // Show address if available
+            if (eventAddress) {
+                addressDisplay.classList.remove('hidden');
+                eventAddressText.textContent = eventAddress;
+            } else {
+                addressDisplay.classList.add('hidden');
+            }
+
+            const targetDate = new Date(eventDate);
+            const eventDateTimeElement = document.getElementById('eventDateTime');
+            eventDateTimeElement.textContent = targetDate.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+
+            function updateTimer() {
+                const now = new Date();
+                const difference = targetDate - now;
+
+                if (difference <= 0) {
+                    document.getElementById('countdownTimer').innerHTML = "🎉 It's Time! 🎉";
+                    return;
+                }
+
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                document.getElementById('countdownTimer').innerHTML = `
+                    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                        <div><div style="font-size: 56px;">${days}</div><div style="font-size: 14px; opacity: 0.8;">DAYS</div></div>
+                        <div><div style="font-size: 56px;">${hours}</div><div style="font-size: 14px; opacity: 0.8;">HOURS</div></div>
+                        <div><div style="font-size: 56px;">${minutes}</div><div style="font-size: 14px; opacity: 0.8;">MINUTES</div></div>
+                        <div><div style="font-size: 56px;">${seconds}</div><div style="font-size: 14px; opacity: 0.8;">SECONDS</div></div>
+                    </div>
+                `;
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+            if (!isOrganizer) {
+                alert('Only the organizer can delete the room.');
+                return;
+            }
+
+            const confirmDelete = confirm('⚠️ WARNING: This will permanently delete the entire room and all participant data. This cannot be undone!\n\nAre you sure you want to delete this room?');
+            
+            if (!confirmDelete) return;
+
+            const doubleConfirm = confirm('Are you REALLY sure? Type your room code to confirm:\n\nRoom Code: ' + currentRoomCode);
+            
+            if (!doubleConfirm) return;
+
+            try {
+                const { error } = await supabase
+                    .from('secret_santa_rooms')
+                    .delete()
+                    .eq('id', currentRoomId);
+
+                if (error) throw error;
+
+                // Clear local storage
+                localStorage.removeItem('currentRoomCode');
+                localStorage.removeItem('currentRoomId');
+                localStorage.removeItem('isOrganizer_' + currentRoomCode);
+
+                // Unsubscribe from channel
+                if (syncChannel) {
+                    syncChannel.unsubscribe();
+                }
+
+                alert('✅ Room deleted successfully!');
+                
+                // Reload page to start fresh
+                window.location.reload();
+            } catch (error) {
+                console.error('Error deleting room:', error);
+                alert('❌ Error deleting room: ' + error.message);
+            }
+        }
+
         async function generateMatches() {
             if (participants.length < 2) {
                 alert('You need at least 2 participants to generate matches!');
@@ -1113,11 +1327,27 @@
             `;
         }
 
-        function showAddTab() {
+        function showHomeTab() {
             document.querySelectorAll('.tab')[0].classList.add('active');
             document.querySelectorAll('.tab')[1].classList.remove('active');
             document.querySelectorAll('.tab')[2].classList.remove('active');
             document.querySelectorAll('.tab')[3].classList.remove('active');
+            document.querySelectorAll('.tab')[4].classList.remove('active');
+            document.getElementById('homeSection').classList.remove('hidden');
+            document.getElementById('addSection').classList.add('hidden');
+            document.getElementById('viewSection').classList.add('hidden');
+            document.getElementById('matchSection').classList.add('hidden');
+            document.getElementById('findMatchSection').classList.add('hidden');
+            updateCountdown();
+        }
+
+        function showAddTab() {
+            document.querySelectorAll('.tab')[0].classList.remove('active');
+            document.querySelectorAll('.tab')[1].classList.add('active');
+            document.querySelectorAll('.tab')[2].classList.remove('active');
+            document.querySelectorAll('.tab')[3].classList.remove('active');
+            document.querySelectorAll('.tab')[4].classList.remove('active');
+            document.getElementById('homeSection').classList.add('hidden');
             document.getElementById('addSection').classList.remove('hidden');
             document.getElementById('viewSection').classList.add('hidden');
             document.getElementById('matchSection').classList.add('hidden');
@@ -1126,20 +1356,29 @@
 
         function showViewTab() {
             document.querySelectorAll('.tab')[0].classList.remove('active');
-            document.querySelectorAll('.tab')[1].classList.add('active');
-            document.querySelectorAll('.tab')[2].classList.remove('active');
+            document.querySelectorAll('.tab')[1].classList.remove('active');
+            document.querySelectorAll('.tab')[2].classList.add('active');
             document.querySelectorAll('.tab')[3].classList.remove('active');
+            document.querySelectorAll('.tab')[4].classList.remove('active');
+            document.getElementById('homeSection').classList.add('hidden');
             document.getElementById('addSection').classList.add('hidden');
             document.getElementById('viewSection').classList.remove('hidden');
             document.getElementById('matchSection').classList.add('hidden');
             document.getElementById('findMatchSection').classList.add('hidden');
+            
+            // Show organizer controls if organizer
+            if (isOrganizer) {
+                document.getElementById('organizerControls').classList.remove('hidden');
+            }
         }
 
         function showMatchTab() {
             document.querySelectorAll('.tab')[0].classList.remove('active');
             document.querySelectorAll('.tab')[1].classList.remove('active');
-            document.querySelectorAll('.tab')[2].classList.add('active');
-            document.querySelectorAll('.tab')[3].classList.remove('active');
+            document.querySelectorAll('.tab')[2].classList.remove('active');
+            document.querySelectorAll('.tab')[3].classList.add('active');
+            document.querySelectorAll('.tab')[4].classList.remove('active');
+            document.getElementById('homeSection').classList.add('hidden');
             document.getElementById('addSection').classList.add('hidden');
             document.getElementById('viewSection').classList.add('hidden');
             document.getElementById('matchSection').classList.remove('hidden');
@@ -1150,7 +1389,9 @@
             document.querySelectorAll('.tab')[0].classList.remove('active');
             document.querySelectorAll('.tab')[1].classList.remove('active');
             document.querySelectorAll('.tab')[2].classList.remove('active');
-            document.querySelectorAll('.tab')[3].classList.add('active');
+            document.querySelectorAll('.tab')[3].classList.remove('active');
+            document.querySelectorAll('.tab')[4].classList.add('active');
+            document.getElementById('homeSection').classList.add('hidden');
             document.getElementById('addSection').classList.add('hidden');
             document.getElementById('viewSection').classList.add('hidden');
             document.getElementById('matchSection').classList.add('hidden');
@@ -1176,6 +1417,8 @@
                     if (data) {
                         participants = data.participants || [];
                         matches = data.matches || [];
+                        eventDate = data.event_date;
+                        eventAddress = data.event_address;
                         isOrganizer = localStorage.getItem('isOrganizer_' + savedRoomCode) === 'true';
                         startUsingRoom();
                     }
