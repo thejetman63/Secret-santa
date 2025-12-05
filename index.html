@@ -620,6 +620,7 @@
         let selectedPreferences = {};
         let matches = [];
         let syncChannel = null;
+        let isOrganizer = false; // Track if this user created the room
 
         function showStatus(message, type = 'info') {
             const statusDiv = document.getElementById('statusMessage');
@@ -657,6 +658,8 @@
                 if (error) throw error;
 
                 currentRoomId = data.id;
+                isOrganizer = true; // Mark as organizer
+                localStorage.setItem('isOrganizer_' + currentRoomCode, 'true');
                 document.getElementById('displayRoomCode').textContent = currentRoomCode;
                 document.getElementById('roomActions').classList.add('hidden');
                 document.getElementById('roomCreatedView').classList.remove('hidden');
@@ -692,6 +695,9 @@
                 currentRoomId = data.id;
                 participants = data.participants || [];
                 matches = data.matches || [];
+                
+                // Check if this user is the organizer
+                isOrganizer = localStorage.getItem('isOrganizer_' + currentRoomCode) === 'true';
                 
                 startUsingRoom();
             } catch (error) {
@@ -886,6 +892,9 @@
             participants.push(participant);
             await saveRoomData();
             
+            // Show success message
+            alert('✅ Profile saved! Your information has been added to the Secret Santa.');
+            
             document.getElementById('nameInput').value = '';
             document.getElementById('monthInput').value = '';
             document.getElementById('dayInput').value = '';
@@ -937,7 +946,7 @@
                             <div class="participant-name">${participant.name}</div>
                             <div class="participant-birthday">🎂 ${MONTHS[participant.birthMonth - 1]} ${participant.birthDay}</div>
                         </div>
-                        <button class="btn-delete" onclick="deleteParticipant('${participant.id}')">Delete</button>
+                        ${isOrganizer ? `<button class="btn-delete" onclick="deleteParticipant('${participant.id}')">Delete</button>` : ''}
                     </div>
                     ${preferencesHTML}
                 `;
@@ -1167,6 +1176,7 @@
                     if (data) {
                         participants = data.participants || [];
                         matches = data.matches || [];
+                        isOrganizer = localStorage.getItem('isOrganizer_' + savedRoomCode) === 'true';
                         startUsingRoom();
                     }
                 } catch (error) {
