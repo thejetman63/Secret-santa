@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+</head>
+<body style="padding: 40px; font-family: Arial;">
+    <h1>JavaScript Test</h1>
+    <p>If you see "Page loaded successfully!" below, JavaScript is working.</p>
+    <button onclick="testClick()" style="padding: 20px; font-size: 18px; margin: 20px 0;">Click Me</button>
+    <div id="result" style="font-size: 20px; color: green; margin-top: 20px;"></div>
+
+    <script>
+        function testClick() {
+            alert('JavaScript is working!');
+            document.getElementById('result').innerHTML = 'Button clicked! ✅';
+        }
+        
+        // Test if this runs on load
+        window.onload = function() {
+            console.log('Page loaded');
+            document.getElementById('result').innerHTML = 'Page loaded successfully! ✅';
+        };
+    </script>
+</body>
+</html>
