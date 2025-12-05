@@ -481,11 +481,11 @@
                 <p>Create a new room or join an existing one.</p>
                 
                 <div id="roomActions">
-                    <button onclick="testConnection()" style="background: #6c757d; margin-bottom: 10px;">Test Database Connection</button>
-                    <button onclick="createNewRoom()">Create New Room</button>
+                    <button onclick="testConnection(); return false;" style="background: #6c757d; margin-bottom: 10px;">Test Database Connection</button>
+                    <button onclick="createNewRoom(); return false;">Create New Room</button>
                     <p style="text-align: center; margin: 15px 0; color: #666;">- OR -</p>
                     <input type="text" id="roomCodeInput" placeholder="Enter Room Code" maxlength="6">
-                    <button onclick="joinRoom()" class="secondary">Join Existing Room</button>
+                    <button onclick="joinRoom(); return false;" class="secondary">Join Existing Room</button>
                 </div>
 
                 <div id="roomCreatedView" class="hidden">
@@ -646,10 +646,32 @@
     </div>
 
     <script>
+        // Add immediate load test
+        console.log('Script starting to load...');
+        
+        // Test if Supabase loaded
+        window.addEventListener('load', function() {
+            console.log('Window loaded');
+            if (typeof window.supabase === 'undefined') {
+                alert('ERROR: Supabase library did not load. This might be a network/CDN issue.');
+                document.getElementById('statusMessage').innerHTML = '<div class="status-message error">ERROR: Supabase CDN blocked or failed to load. Try a different network or browser.</div>';
+            } else {
+                console.log('Supabase loaded successfully');
+            }
+        });
+
         const SUPABASE_URL = 'https://qmnxezjxjxfltmbpxbec.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtbnhlemp4anhmbHRtYnB4YmVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ5NDc0NTksImV4cCI6MjA4MDUyMzQ1OX0.LGlh7vkaJTLVcI6O5UHEHhQ-QKzirnWZPY9SGKM5USI';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let supabase;
+        
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log('Supabase client created');
+        } catch (error) {
+            console.error('Failed to create Supabase client:', error);
+            alert('Failed to initialize database connection: ' + error.message);
+        }
 
         const GIFT_CATEGORIES = {
             hobbies: {
