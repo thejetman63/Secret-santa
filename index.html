@@ -481,6 +481,7 @@
                 <p>Create a new room or join an existing one.</p>
                 
                 <div id="roomActions">
+                    <button onclick="testConnection()" style="background: #6c757d; margin-bottom: 10px;">Test Database Connection</button>
                     <button onclick="createNewRoom()">Create New Room</button>
                     <p style="text-align: center; margin: 15px 0; color: #666;">- OR -</p>
                     <input type="text" id="roomCodeInput" placeholder="Enter Room Code" maxlength="6">
@@ -705,11 +706,37 @@
             return code;
         }
 
-        async function createNewRoom() {
-            showStatus('Creating room...', 'info');
-            currentRoomCode = generateRoomCode();
-
+        async function testConnection() {
+            showStatus('Testing database connection...', 'info');
+            
             try {
+                // Try to query the table
+                const { data, error } = await supabase
+                    .from('secret_santa_rooms')
+                    .select('*')
+                    .limit(1);
+                
+                if (error) {
+                    console.error('Database error:', error);
+                    showStatus('❌ Database Error: ' + error.message + '<br><br>Did you run the SQL command to add event_date and event_address columns?', 'error');
+                    return;
+                }
+                
+                console.log('Database test successful:', data);
+                showStatus('✅ Database connection working! You can now create a room.', 'success');
+            } catch (error) {
+                console.error('Connection error:', error);
+                showStatus('❌ Connection Error: ' + error.message, 'error');
+            }
+        }
+
+        async function createNewRoom() {
+            try {
+                showStatus('Creating room...', 'info');
+                currentRoomCode = generateRoomCode();
+                
+                console.log('Attempting to create room with code:', currentRoomCode);
+
                 const { data, error } = await supabase
                     .from('secret_santa_rooms')
                     .insert([
@@ -724,7 +751,12 @@
                     .select()
                     .single();
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Supabase error:', error);
+                    throw error;
+                }
+
+                console.log('Room created successfully:', data);
 
                 currentRoomId = data.id;
                 isOrganizer = true; // Mark as organizer
@@ -735,7 +767,7 @@
                 showStatus('✅ Room created successfully!', 'success');
             } catch (error) {
                 console.error('Error creating room:', error);
-                showStatus('❌ Error creating room: ' + error.message, 'error');
+                showStatus('❌ Error creating room: ' + error.message + '. Please make sure you ran the SQL to update the database.', 'error');
             }
         }
 
